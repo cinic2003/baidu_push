@@ -1,7 +1,8 @@
 module BaiduPush
   class Client
 
-    API_HOST = 'channel.api.duapp.com'
+    # API_HOST = 'channel.api.duapp.com'
+    API_HOST = 'api.tuisong.baidu.com'
     DEFAULT_RESOURCE = 'channel'
 
     DEFAULT_OPTIONS = {
