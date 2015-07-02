@@ -31,6 +31,7 @@ client.push_msg 3, messages, 'android-test', message_type: 1
 ```ruby
 def push_all msg: msg, msg_type: 1
 def push_single msg: msg, channel_id: 'xxxx', msg_type: 1
+def push_batch msg: msg, channel_ids: ['xxx', 'xxx', ...], msg_type: 1
 ```
 
 ## Contributing
