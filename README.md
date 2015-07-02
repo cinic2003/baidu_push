@@ -1,20 +1,17 @@
-# BaiduPush
+# Baidu Cloud Push
 
-The ruby wrapper of baidu push.
+The ruby gem of baidu cloud push base on Baidu Push Rest API 3.0
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'baidu_push'
+    gem 'baidu_push', :git => 'git@github.com:cinic2003/baidu_push.git
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install baidu_push
 
 ## Usage
 
@@ -22,38 +19,17 @@ Or install it yourself as:
 api_key = 'your_api_key'
 secret_key = 'your_secret_key'
 # Create a client
-client = BaiduPush::Client.new(api_key, secret_key)
-
-# Set resource of client
-client.resource = 'your_channel_id'
-# Query bindlist
-client.query_bindlist
+client = BaiduPush::Client.new(api_key: api_key, secret_key: secret_key)
 
 # Push messages
 messages = { title: 'title', description: 'desc' }
 client.push_msg 3, messages, 'android-test', message_type: 1
 ```
->For more examples refer to the [official doc](http://developer.baidu.com/wiki/index.php?title=docs/cplat/push/api/list).
+>For more examples refer to the [official doc](http://push.baidu.com/doc/restapi/restapi)
 
 ### Required params:
 ```ruby
-def query_bindlist(params = {})
-def push_msg(push_type, messages, msg_keys, params = {})
-def init_app_ioscert(name, description, release_cert, dev_cert, params = {})
-def update_app_ioscert(params = {})
-def delete_app_ioscert(params = {})
-def query_app_ioscert(params = {})
-def verify_bind(user_id, params = {})
-def fetch_msg(user_id, params = {})
-def fetch_msgcount(user_id, params = {})
-def delete_msg(user_id, msg_ids, params = {})
-def set_tag(tag, params = {})
-def fetch_tag(params = {})
-def delete_tag(tag, params = {})
-def query_user_tags(user_id, params = {})
-def query_device_type(params = {})
 ```
-Optional params refer to the official doc.
 
 ## Contributing
 
@@ -62,3 +38,6 @@ Optional params refer to the official doc.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## From
+Thanks [fahchen/baidu_push](https://github.com/fahchen/baidu_push.git)

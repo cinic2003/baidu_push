@@ -1,32 +1,37 @@
 module BaiduPush
   class Client
 
-    # API_HOST = 'channel.api.duapp.com'
-    API_HOST = 'api.tuisong.baidu.com'
-    DEFAULT_RESOURCE = 'channel'
+    RESOURCE = {push_all: 'push/all', 
+                push_sigle: 'push/single_device',
+                push_tags: 'push/tags'}
 
+    REQUEST_METHOD = :post
     DEFAULT_OPTIONS = {
       use_ssl: false,
-      api_version: '2.0'
+      api_version: '3.0'
     }
+    API_HOST = "api.tuisong.baidu.com/rest/#{DEFAULT_OPTIONS[:api_version]}"
 
-    attr_reader :api_key, :secret_key, :api_url, :request, :options
+    attr_reader :api_key, :secret_key, :resource, :api_uri, :request_method, :options 
     attr_accessor :resource
 
-    def initialize(api_key, secret_key, options = {})
-      @api_key, @secret_key = (api_key || '').strip, (secret_key || '').strip
+    def initialize(api_key: '', secret_key: '', options: {})
+      @api_key, @secret_key = api_key.strip, secret_key.strip
       @options = DEFAULT_OPTIONS.merge options
 
-      set_api_url
-      @resource ||= DEFAULT_RESOURCE
       @request = Request.new(self)
     end
 
     ###################################################
     # Basic API
     #
-    def query_bindlist(params = {})
-      @request.fetch(:query_bindlist, params)
+
+    def push_all msg: '', msg_type: 1
+      set_resource RESOURCE[:push_all]
+      params = {msg_type: msg_type, msg: msg.to_json, timestamp: Time.now.to_i, apikey: @api_key}
+
+      @api_uri = set_api_uri
+      @request.fetch params
     end
 
     def push_msg(push_type, messages, msg_keys, params = {})
@@ -133,13 +138,14 @@ module BaiduPush
     ###################################################
 
     private
-    def set_api_url
+    def set_api_uri
+      @request_method = REQUEST_METHOD
       scheme = @options[:use_ssl] ? 'https' : 'http'
-      @api_url = "#{scheme}://#{API_HOST}/rest/#{@options[:api_version]}/channel"
+      @api_uri = "#{scheme}://#{API_HOST}/#{@resource}"
     end
 
-    def set_to_default_resource
-      @resource = DEFAULT_RESOURCE
+    def set_resource resource
+      @resource = resource
     end
   end
 end

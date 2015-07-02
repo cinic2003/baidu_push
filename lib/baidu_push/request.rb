@@ -4,34 +4,29 @@ require 'digest'
 
 module BaiduPush
   class Request
-    include HTTParty
-
-    HTTP_METHOD = :post
 
     attr_reader :client
 
     def initialize(client)
       @client = client
 
-      set_base_uri
+      #set_base_uri
     end
 
-    def fetch(method, params = {})
-      params.merge!({method: method,
-                     apikey: @client.api_key,
-                     timestamp: Time.now.to_i})
-      sign = generate_sign(params)
-      params.merge!({ sign: sign })
-
-      options = { body: params }
-      self.class.send(HTTP_METHOD, "/#{@client.resource}", options)
+    def fetch params = {}
+      params.merge!({sign: generate_sign(params)})
+      uri = URI(@client.api_uri)
+      req = Net::HTTP::Post.new(uri)
+      req.set_form_data(params)
+      req['Content-Type'] = "application/x-www-form-urlencoded;charset=utf-8"
+      req['User-Agent'] = "BCCS_SDK/3.0 (Linux version 3.13.0-45-generic) Ruby/2.2 (Baidu Push Server SDK V3.0.0)"
+      Net::HTTP.start(uri.host, uri.port){|http| http.request(req)}
     end
 
-    def generate_sign(sign_params)
-      params_string = sign_params.sort.map{ |h| h.join('=') }.join
-      gather = "#{HTTP_METHOD.to_s.upcase}#{self.class.base_uri}/#{@client.resource}#{params_string}#{@client.secret_key}"
-
-      Digest::MD5.hexdigest(URI::encode_www_form_component(gather))
+    def generate_sign params = {}
+      params_str = params.sort.map{ |p| p.join('=') }.join
+      base_str = "#{@client.request_method.to_s.upcase}#{@client.api_uri}#{params_str}#{@client.secret_key}"
+      Digest::MD5.hexdigest(URI::encode_www_form_component(base_str))
     end
 
     private
