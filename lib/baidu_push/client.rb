@@ -2,7 +2,7 @@ module BaiduPush
   class Client
 
     RESOURCE = {push_all: 'push/all', 
-                push_sigle: 'push/single_device',
+                push_single: 'push/single_device',
                 push_tags: 'push/tags'}
 
     REQUEST_METHOD = :post
@@ -28,8 +28,15 @@ module BaiduPush
 
     def push_all msg: '', msg_type: 1
       set_resource RESOURCE[:push_all]
-      params = {msg_type: msg_type, msg: msg.to_json, timestamp: Time.now.to_i, apikey: @api_key}
+      params = {msg_type: msg_type, msg: msg.to_json} #, timestamp: Time.now.to_i, apikey: @api_key}
 
+      @api_uri = set_api_uri
+      @request.fetch params
+    end
+
+    def push_single msg: '', channel_id: '', msg_type: 1
+      set_resource RESOURCE[:push_single]
+      params = {msg_type: msg_type, msg: msg.to_json, channel_id: channel_id} #, timestamp: Time.now.to_i}
       @api_uri = set_api_uri
       @request.fetch params
     end

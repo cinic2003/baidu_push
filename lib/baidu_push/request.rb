@@ -13,6 +13,7 @@ module BaiduPush
     end
 
     def fetch params = {}
+      params.merge!({apikey: @client.api_key, timestamp: Time.now.to_i})
       params.merge!({sign: generate_sign(params)})
       uri = URI(@client.api_uri)
       req = Net::HTTP::Post.new(uri)
